@@ -87,6 +87,26 @@ except Exception as exc:
     raise
 ```
 
+If `service` and `trace_id` are repetitive across calls, set them once at client init. They apply only to `capture_exception` / `acapture_exception` — explicit `ingest.send()` payloads are passed through unchanged.
+
+```python
+import contextvars
+from typing import Optional
+
+request_id_var: contextvars.ContextVar[Optional[str]] = contextvars.ContextVar(
+    "request_id", default=None
+)
+
+relivio = Relivio(
+    api_key="rk_...",
+    default_service="checkout-api",
+    trace_id_provider=request_id_var.get,  # called per capture; exceptions are swallowed
+)
+
+# Per-call only api_path needs to be passed.
+relivio.capture_exception(exc, api_path=request.path)
+```
+
 Read protection status explicitly from guard code:
 
 ```python

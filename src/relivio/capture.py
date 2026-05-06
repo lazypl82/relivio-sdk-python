@@ -5,6 +5,7 @@ from typing import Optional
 from .resources.ingest import IngestResource
 from .stats import RelivioStatsStore
 from .types.ingest import IngestLogInput, LogLevel
+from .types.options import TraceIdProvider
 
 
 @dataclass(frozen=True)
@@ -17,9 +18,18 @@ class CaptureExceptionInput:
 
 
 class CaptureResource:
-    def __init__(self, ingest: IngestResource, stats: RelivioStatsStore) -> None:
+    def __init__(
+        self,
+        ingest: IngestResource,
+        stats: RelivioStatsStore,
+        *,
+        default_service: Optional[str] = None,
+        trace_id_provider: Optional[TraceIdProvider] = None,
+    ) -> None:
         self._ingest = ingest
         self._stats = stats
+        self._default_service = default_service
+        self._trace_id_provider = trace_id_provider
 
     def capture_exception(
         self,
@@ -32,10 +42,10 @@ class CaptureResource:
     ) -> None:
         input = CaptureExceptionInput(
             exception=exc,
-            service=service,
+            service=service if service is not None else self._default_service,
             level=level,
             api_path=api_path,
-            trace_id=trace_id,
+            trace_id=trace_id if trace_id is not None else self._resolve_trace_id(),
         )
         self._capture(input, async_send=False)
 
@@ -50,12 +60,26 @@ class CaptureResource:
     ) -> None:
         input = CaptureExceptionInput(
             exception=exc,
-            service=service,
+            service=service if service is not None else self._default_service,
             level=level,
             api_path=api_path,
-            trace_id=trace_id,
+            trace_id=trace_id if trace_id is not None else self._resolve_trace_id(),
         )
         await self._acapture(input)
+
+    def _resolve_trace_id(self) -> Optional[str]:
+        provider = self._trace_id_provider
+        if provider is None:
+            return None
+        try:
+            value = provider()
+        except Exception:
+            return None
+        if value is None:
+            return None
+        if not isinstance(value, str):
+            return None
+        return value or None
 
     def _build_ingest_input(self, input: CaptureExceptionInput) -> IngestLogInput:
         exc = input.exception

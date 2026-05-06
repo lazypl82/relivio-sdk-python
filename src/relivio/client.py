@@ -17,7 +17,12 @@ class Relivio:
         self.ingest = IngestResource(http)
         self.protection = ProtectionResource(http)
         self.verdicts = VerdictsResource(http)
-        self.capture = CaptureResource(self.ingest, self._stats_store)
+        self.capture = CaptureResource(
+            self.ingest,
+            self._stats_store,
+            default_service=options.default_service,
+            trace_id_provider=options.trace_id_provider,
+        )
 
     def status(self) -> RelivioStatsSnapshot:
         return self._stats_store.snapshot()
