@@ -6,7 +6,7 @@ Primitive Python client for Relivio deploy registration, ingest, and exception c
 
 ## Status
 
-- current package scope: `0.1.0`
+- current package scope: `0.2.0`
 - supported Python versions: `3.9+`
 - current public surface:
   - `deployments.register()`

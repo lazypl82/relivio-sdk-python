@@ -1,6 +1,6 @@
 [project]
 name = "relivio"
-version = "0.1.0"
+version = "0.2.0"
 description = "Primitive Python client for Relivio deploy registration, ingest, and exception capture."
 readme = "README.md"
 license = { text = "MIT" }
