@@ -32,6 +32,7 @@ def test_http_retries_rate_limit_until_success(respx_mock):
     result = client.deployments.register()
 
     assert result.id == "dep_3"
+    assert result.deployment_id == "dep_3"
     assert len(route.calls) == 2
 
 

@@ -56,7 +56,7 @@ from relivio import Relivio, IngestLogInput
 relivio = Relivio(api_key="rk_...")
 
 deployment = relivio.deployments.register()
-print(deployment.id)
+print(deployment.deployment_id)
 
 result = relivio.ingest.send(
     IngestLogInput(
@@ -135,7 +135,7 @@ async def main() -> None:
     deployment = await relivio.deployments.aregister(
         RegisterDeploymentInput(version="1.2.3")
     )
-    print(deployment.id)
+    print(deployment.deployment_id)
 
     try:
         await run_usecase()

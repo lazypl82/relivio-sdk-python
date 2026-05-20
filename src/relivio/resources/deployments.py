@@ -25,6 +25,7 @@ class DeploymentsResource:
         )
         return RegisterDeploymentResponse(
             id=str(raw["id"]),
+            deployment_id=str(raw.get("deployment_id") or raw["id"]),
             version=raw.get("version") if isinstance(raw.get("version"), str) else None,
             summary_scheduled=bool(raw["summary_scheduled"]),
         )
@@ -49,6 +50,7 @@ class DeploymentsResource:
         )
         return RegisterDeploymentResponse(
             id=str(raw["id"]),
+            deployment_id=str(raw.get("deployment_id") or raw["id"]),
             version=raw.get("version") if isinstance(raw.get("version"), str) else None,
             summary_scheduled=bool(raw["summary_scheduled"]),
         )

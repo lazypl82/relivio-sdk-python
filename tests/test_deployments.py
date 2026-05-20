@@ -6,6 +6,7 @@ def test_register_deployment_success(respx_mock):
         status_code=201,
         json={
             "id": "dep_1",
+            "deployment_id": "dep_1",
             "version": "1.2.3",
             "summary_scheduled": True,
         },
@@ -18,6 +19,7 @@ def test_register_deployment_success(respx_mock):
     request = route.calls.last.request
     assert request.headers["X-API-Key"] == "rk_test"
     assert result.id == "dep_1"
+    assert result.deployment_id == "dep_1"
     assert result.version == "1.2.3"
     assert result.summary_scheduled is True
 
@@ -27,6 +29,7 @@ def test_register_deployment_sets_idempotency_key(respx_mock):
         status_code=201,
         json={
             "id": "dep_2",
+            "deployment_id": "dep_2",
             "version": None,
             "summary_scheduled": True,
         },
@@ -47,6 +50,7 @@ def test_register_from_environment_merges_runtime_metadata(respx_mock, monkeypat
         status_code=201,
         json={
             "id": "dep_env",
+            "deployment_id": "dep_env",
             "version": "abc123",
             "summary_scheduled": True,
         },
@@ -63,3 +67,4 @@ def test_register_from_environment_merges_runtime_metadata(respx_mock, monkeypat
     assert '"runtime":"python"' in body
     assert '"explicit":"kept"' in body
     assert result.id == "dep_env"
+    assert result.deployment_id == "dep_env"

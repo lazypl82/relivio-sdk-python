@@ -13,5 +13,6 @@ class RegisterDeploymentInput:
 @dataclass(frozen=True)
 class RegisterDeploymentResponse:
     id: str
+    deployment_id: str
     version: Optional[str]
     summary_scheduled: bool
